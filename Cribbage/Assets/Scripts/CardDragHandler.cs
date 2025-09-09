@@ -3,46 +3,53 @@ using UnityEngine.EventSystems;
 
 public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    private Canvas canvas;
-    private RectTransform rectTransform;
+    public Vector3 startPosition;
+    public Transform originalParent;
     private CanvasGroup canvasGroup;
-    private Vector2 originalPosition;
 
     private void Awake()
     {
-        rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
-        canvas = GetComponentInParent<Canvas>();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // Store the original position in case the card needs to return
-        originalPosition = rectTransform.anchoredPosition;
+        startPosition = transform.position;
+        originalParent = transform.parent;
 
-        // Make the card semi-transparent and ignore raycasts while dragging
-        canvasGroup.alpha = 0.6f;
+        // Make the card draggable
         canvasGroup.blocksRaycasts = false;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        // Move the card with the cursor
-        rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        // Update the card's position to follow the mouse
+        transform.position = Input.mousePosition;
+
+        // make transparent
+        canvasGroup.alpha = 0.8f;
+
+        // rotate slightly based on horizontal movement
+        float rotationZ = Mathf.Clamp((Input.mousePosition.x - startPosition.x) / 20f, -15f, 15f);
+        transform.rotation = Quaternion.Euler(0, 0, rotationZ);
+        
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        // Reset the card's transparency and allow raycasts again
-        canvasGroup.alpha = 1f;
+        // Restore raycast blocking
         canvasGroup.blocksRaycasts = true;
+        // Restore full opacity
+        canvasGroup.alpha = 1f;
 
-        // code does not work as intended, always returns to original position
-        // Intended: Snap back to the original position if not dropped in a valid area
-        if (!eventData.pointerEnter || !eventData.pointerEnter.CompareTag("DropZone"))
+        // Restore rotation
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+
+        // Check if the card was dropped in a valid drop zone
+        if (transform.parent == originalParent)
         {
-            rectTransform.anchoredPosition = originalPosition;
-            Debug.Log($"Card {gameObject.name} returned to original position");
+            // If not, return the card to its original position
+            transform.position = startPosition;
         }
     }
 }

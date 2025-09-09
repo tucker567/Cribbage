@@ -7,12 +7,27 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
     {
         GameObject droppedCard = eventData.pointerDrag;
 
-        if (droppedCard != null)
+        if (droppedCard != null && droppedCard.CompareTag("Card"))
         {
-            RectTransform cardTransform = droppedCard.GetComponent<RectTransform>();
-            cardTransform.anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
+            // Check if this GameObject is a valid drop zone
+            if (CompareTag("DropZone"))
+            {
+                // Set the card's parent to this drop zone
+                droppedCard.transform.SetParent(transform);
 
-            Debug.Log($"Card {droppedCard.name} dropped in {gameObject.name}");
+                // Optionally, snap the card to the center of the drop zone
+                droppedCard.transform.position = transform.position;
+
+                Debug.Log("Card successfully dropped in a valid drop zone.");
+            }
+            else
+            {
+                Debug.Log("Invalid drop zone. Returning card to hand.");
+                // Return the card to its original parent
+                CardDragHandler dragHandler = droppedCard.GetComponent<CardDragHandler>();
+                droppedCard.transform.SetParent(dragHandler.originalParent);
+                droppedCard.transform.position = dragHandler.startPosition;
+            }
         }
     }
 }
