@@ -1,0 +1,13 @@
+{
+    "asset": "cf15546228a0fde499c34967aac5709a",
+    "fileName": "01992a41-fe29-794b-b2aa-4196775a3ef6.wav",
+    "prompt": "a single noise for slekting somthing",
+    "negativePrompt": "digital,reverb",
+    "model": "0ee39b33-2893-4e0f-8c46-0e0bdd4eda85",
+    "modelName": "Text to Sound",
+    "customSeed": -1,
+    "w3CTraceId": "4a6780e3776c09622dc89b9db56d3320",
+    "duration": 2.0199999809265138,
+    "autoTrim": true,
+    "hasReference": false
+}

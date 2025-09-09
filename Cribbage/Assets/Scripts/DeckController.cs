@@ -1,6 +1,3 @@
-// 2025-09-05 AI-Tag
-// This was created with the help of Assistant, a Unity Artificial Intelligence product.
-
 using System.Collections.Generic;
 using UnityEngine;
 

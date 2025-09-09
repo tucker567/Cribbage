@@ -1,0 +1,13 @@
+{
+    "asset": "cf15546228a0fde499c34967aac5709a",
+    "fileName": "01992a42-bb63-726e-bcb6-10a056eed2ee.wav",
+    "prompt": "a fast single note noise for slekting somthing",
+    "negativePrompt": "digital,reverb",
+    "model": "0ee39b33-2893-4e0f-8c46-0e0bdd4eda85",
+    "modelName": "Text to Sound",
+    "customSeed": -1,
+    "w3CTraceId": "645f387afafbaf3fd87ef5650cec08d7",
+    "duration": 2.0199999809265138,
+    "autoTrim": true,
+    "hasReference": false
+}

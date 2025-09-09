@@ -1,0 +1,13 @@
+{
+    "asset": "cf15546228a0fde499c34967aac5709a",
+    "fileName": "01992a40-eee0-7dc5-8938-dfa28d1187ae.wav",
+    "prompt": "A subtle sound effect for picking up and dropping cards in a card game. quic",
+    "negativePrompt": "digital",
+    "model": "0ee39b33-2893-4e0f-8c46-0e0bdd4eda85",
+    "modelName": "Text to Sound",
+    "customSeed": -1,
+    "w3CTraceId": "e401f24980d0d832ce12575430069582",
+    "duration": 2.0199999809265138,
+    "autoTrim": true,
+    "hasReference": false
+}
