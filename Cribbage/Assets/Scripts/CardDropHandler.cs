@@ -156,5 +156,14 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
     public void AllCardsPlayed()// when all cards have been played, move cards in play area down arrange them, then tally points
     {
         handUIController.ShufflePlayedCards();
+        // Disable the done button after all cards have been played
+        doneButton.SetActive(false);
+    }
+
+    // done button for if player decides all posible cards have been played
+    public void OnDoneButtonClicked()
+    {
+        handUIController.ShufflePlayedCards();
+        doneButton.SetActive(false);
     }
 }

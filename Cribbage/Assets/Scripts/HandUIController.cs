@@ -60,8 +60,67 @@ public class HandUIController : MonoBehaviour
     {
         Debug.Log("Shuffling played cards...");
 
-        // Shuffle all cards that are children of PlayArea that have the name "CardUI(Clone)"
+        // Collect all children of playArea named "CardUI(Clone)"
         List<GameObject> playedCards = new List<GameObject>();
+        for (int i = 0; i < playArea.transform.childCount; i++)
+        {
+            Transform child = playArea.transform.GetChild(i);
+            if (child.gameObject.name == "CardUI(Clone)")
+            {
+                playedCards.Add(child.gameObject);
+            }
+        }
 
+        // Shuffle the playedCards list
+        for (int i = 0; i < playedCards.Count; i++)
+        {
+            int rnd = Random.Range(i, playedCards.Count);
+            GameObject temp = playedCards[rnd];
+            playedCards[rnd] = playedCards[i];
+            playedCards[i] = temp;
+        }
+
+        // Arrange shuffled cards in playArea with spacing, animating them smoothly
+        float spacing = 100f;
+        float startX = -(playedCards.Count - 1) * spacing / 2;
+        float downY = playedCards.Count > 0 ? playedCards[0].GetComponent<RectTransform>().anchoredPosition.y - 80f : 0f;
+        for (int i = 0; i < playedCards.Count; i++)
+        {
+            RectTransform cardTransform = playedCards[i].GetComponent<RectTransform>();
+            Vector2 targetPosition = new Vector2(startX + i * spacing, downY);
+            StartCoroutine(AnimateCardToPosition(cardTransform, targetPosition));
+        }
     }
+
+    // Coroutine to animate card moving down then out to its target position
+    private System.Collections.IEnumerator AnimateCardToPosition(RectTransform cardTransform, Vector2 targetPosition)
+    {
+        Vector2 startPosition = cardTransform.anchoredPosition;
+        Vector2 downPosition = new Vector2(startPosition.x, startPosition.y - 80f);
+        float durationDown = 0.6f;
+        float durationOut = 1.0f;
+        float elapsed = 0f;
+
+        // Move down and set rotation back upright
+        while (elapsed < durationDown)
+        {
+            cardTransform.anchoredPosition = Vector2.Lerp(startPosition, downPosition, elapsed / durationDown);
+            cardTransform.rotation = Quaternion.Lerp(Quaternion.Euler(0, 0, 5), Quaternion.Euler(0, 0, 0), elapsed / durationDown);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        cardTransform.anchoredPosition = downPosition;
+
+        // Move out to target
+        elapsed = 0f;
+        Vector2 outStart = downPosition;
+        while (elapsed < durationOut)
+        {
+            cardTransform.anchoredPosition = Vector2.Lerp(outStart, targetPosition, elapsed / durationOut);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        cardTransform.anchoredPosition = targetPosition;
+    }
+    
 }
