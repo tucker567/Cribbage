@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.XR;
 
 public class CardDropHandler : MonoBehaviour, IDropHandler
 {
@@ -7,6 +8,7 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
     public CanvasGroup canvasGroup;
     public static int discardedCardCount = 0; // Track globally
     public Pegging pegging; // Reference to the Pegging script
+    public HandUIController handUIController; // Reference to HandUIController
     public void OnDrop(PointerEventData eventData)
     {
         GameObject droppedCard = eventData.pointerDrag;
@@ -47,7 +49,11 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
                     {
                         Destroy(dragHandler);
                     }
+                    // Remove the card from the hand UI controller's lists
+                    handUIController.RemoveCardFromHand(droppedCard);
+
                     discardedCardCount++;
+                    // No need to call ArrangeCardsInHand here
                 }
                 else
                 {
@@ -63,6 +69,27 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
             {
                 if (discardedCardCount >= 2)
                 {
+                    // Get needed components before we potentially move or revert
+                    CardDragHandler dragHandler = droppedCard.GetComponent<CardDragHandler>();
+                    CardUIController cardUI = droppedCard.GetComponent<CardUIController>();
+
+                    // Score and validate the play (prevent exceeding 31)
+                    if (pegging != null && cardUI != null)
+                    {
+                        if (!pegging.TryPlayCard(cardUI, out int points))
+                        {
+                            Debug.Log("Illegal play (would exceed 31). Returning card to hand.");
+                            // Return the card to its original parent
+                            droppedCard.transform.SetParent(dragHandler.originalParent);
+                            droppedCard.transform.position = dragHandler.startPosition;
+                            return;
+                        }
+                        else
+                        {
+                            Debug.Log($"Card played: {droppedCard.name} scored {points} pegging point(s).");
+                        }
+                    }
+
                     // Set the card's parent to this drop zone
                     droppedCard.transform.SetParent(transform);
 
@@ -78,25 +105,21 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
                     droppedCard.transform.rotation = Quaternion.Euler(0, 0, Random.Range(-5f, 5f));
 
                     // show debug message of successful drop and card number and suitnumber of card dropped
-                    CardUIController cardUI = droppedCard.GetComponent<CardUIController>();
-                    if (cardUI != null)
+                    CardUIController cardUIAfter = droppedCard.GetComponent<CardUIController>();
+                    if (cardUIAfter != null)
                     {
-                        Debug.Log("Card played: " + droppedCard.name + " (Suit: " + cardUI.suitNumber + ", Number: " + cardUI.number + ")");
-                    }
-
-                    // Tell Pegging that this card has been played
-                    if (pegging != null)
-                    {
-                        pegging.AddToScore(1); // Add 1 to pegging score for each card played
-                        Debug.Log("Card played. Current Pegging Score: " + pegging.currentScore);
+                        Debug.Log("Card played: " + droppedCard.name + " (Suit: " + cardUIAfter.suitNumber + ", Number: " + cardUIAfter.number + ")");
                     }
 
                     // Card that has been played can no longer be dragged
-                    CardDragHandler dragHandler = droppedCard.GetComponent<CardDragHandler>();
                     if (dragHandler != null)
                     {
                         Destroy(dragHandler);
                     }
+                    // Remove the card from the hand UI controller's lists
+                    handUIController.RemoveCardFromHand(droppedCard);
+
+                    // No need to call ArrangeCardsInHand here
                 }
                 else
                 {
@@ -107,7 +130,6 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
                     droppedCard.transform.position = dragHandler.startPosition;
                 }
             }
-            // Other zones
             else
             {
                 Debug.Log("Invalid drop zone. Returning card to hand.");
