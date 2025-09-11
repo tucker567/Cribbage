@@ -1018,7 +1018,7 @@ GameObject:
   - component: {fileID: 1020150991}
   m_Layer: 0
   m_Name: PlayArea
-  m_TagString: DropZone
+  m_TagString: PlayPile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1726,7 +1726,7 @@ GameObject:
   - component: {fileID: 1957848514}
   m_Layer: 0
   m_Name: DiscardPile
-  m_TagString: DropZone
+  m_TagString: DiscardPile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

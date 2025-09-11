@@ -6,6 +6,8 @@ TagManager:
   tags:
   - DropZone
   - Card
+  - DiscardPile
+  - PlayPile
   layers:
   - Default
   - TransparentFX
