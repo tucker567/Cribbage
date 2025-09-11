@@ -2,9 +2,10 @@ using UnityEngine;
 
 public class DeckUIController : MonoBehaviour
 {
+    public GameObject drawButton; // Reference to the button that triggers drawing cards
     public DeckController deckController; // Reference to the DeckController
     public HandUIController handUIController; // Reference to the HandUIController
-    public int numberOfCardsToDraw = 1; // Public variable to specify how many cards to draw
+    public int numberOfCardsToDraw = 5; // Public variable to specify how many cards to draw
 
     public void DrawCards()
     {
@@ -13,7 +14,7 @@ public class DeckUIController : MonoBehaviour
             CardDefinition drawnCard = deckController.DrawSingleCard(); // Draw a card from the deck
             if (drawnCard != null)
             {
-                handUIController.AddCardToHand(drawnCard.artwork); // Add the card to the UI hand
+                handUIController.AddCardToHand(drawnCard.artwork, drawnCard.suitNumber, drawnCard.number); // Add the card to the UI hand
             }
             else
             {

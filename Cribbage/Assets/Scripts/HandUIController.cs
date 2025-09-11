@@ -7,13 +7,16 @@ public class HandUIController : MonoBehaviour
     public GameObject cardUIPrefab;
     private List<GameObject> cardUIObjects = new List<GameObject>();
 
-    public void AddCardToHand(Sprite cardArtwork)
+
+    public void AddCardToHand(Sprite cardArtwork, string suitNumber, string number)
     {
         GameObject newCard = Instantiate(cardUIPrefab, handArea);
         CardUIController cardUI = newCard.GetComponent<CardUIController>();
-        cardUI.SetCard(cardArtwork);
+        cardUI.SetCardArt(cardArtwork);
         cardUIObjects.Add(newCard);
         ArrangeCardsInHand();
+        cardUI.SetCardNumberAndSuit(suitNumber, number);
+        
     }
 
     private void ArrangeCardsInHand()
