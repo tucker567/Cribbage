@@ -9,6 +9,8 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
     public static int discardedCardCount = 0; // Track globally
     public Pegging pegging; // Reference to the Pegging script
     public HandUIController handUIController; // Reference to HandUIController
+    public GameObject doneButton; // Reference to button to be able to make it visible when two cards have been discarded
+
     public void OnDrop(PointerEventData eventData)
     {
         GameObject droppedCard = eventData.pointerDrag;
@@ -88,6 +90,8 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
                         {
                             Debug.Log($"Card played: {droppedCard.name} scored {points} pegging point(s).");
                         }
+                        doneButton.SetActive(true); // Show the done button when a card is played
+
                     }
 
                     // Set the card's parent to this drop zone
@@ -119,7 +123,10 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
                     // Remove the card from the hand UI controller's lists
                     handUIController.RemoveCardFromHand(droppedCard);
 
-                    // No need to call ArrangeCardsInHand here
+                    if (handUIController.cardUIObjects.Count == 0)
+                    {
+                        AllCardsPlayed();
+                    }
                 }
                 else
                 {
@@ -139,5 +146,15 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
                 droppedCard.transform.position = dragHandler.startPosition;
             }
         }
+    }
+
+    void Start()
+    {
+        doneButton.SetActive(false); // Hide the done button at the start
+    }
+
+    public void AllCardsPlayed()// when all cards have been played, move cards in play area down arrange them, then tally points
+    {
+        handUIController.ShufflePlayedCards();
     }
 }

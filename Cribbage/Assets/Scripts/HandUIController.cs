@@ -7,6 +7,7 @@ public class HandUIController : MonoBehaviour
     public GameObject cardUIPrefab;
     public List<GameObject> cardUIObjects = new List<GameObject>();
     private List<GameObject> fixedCardUIObjects = new List<GameObject>(); // Cards not to be shuffled
+    public GameObject playArea; // Reference to the PlayArea GameObject
 
     public void AddCardToHand(Sprite cardArtwork, string suitNumber, string cardNumber)
     {
@@ -53,5 +54,14 @@ public class HandUIController : MonoBehaviour
         cardUIObjects.Remove(card);
         fixedCardUIObjects.Remove(card);
         ArrangeCardsInHand();
+    }
+
+    public void ShufflePlayedCards()
+    {
+        Debug.Log("Shuffling played cards...");
+
+        // Shuffle all cards that are children of PlayArea that have the name "CardUI(Clone)"
+        List<GameObject> playedCards = new List<GameObject>();
+
     }
 }
