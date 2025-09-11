@@ -13,6 +13,15 @@ public class Pegging : MonoBehaviour
     {
         currentScore += points;
         Debug.Log("Current Pegging Score: " + currentScore);
+        UpdateScoreDisplay();
+    }
+
+    private void UpdateScoreDisplay()
+    {
+        if (scoreText != null)
+        {
+            scoreText.text = "Score: " + currentScore;
+        }
     }
     
 }

@@ -2,10 +2,9 @@ using UnityEngine;
 
 public class DeckUIController : MonoBehaviour
 {
-    public GameObject drawButton; // Reference to the button that triggers drawing cards
     public DeckController deckController; // Reference to the DeckController
     public HandUIController handUIController; // Reference to the HandUIController
-    public int numberOfCardsToDraw = 5; // Public variable to specify how many cards to draw
+    public int numberOfCardsToDraw = 8; // Public variable to specify how many cards to draw
 
     public void DrawCards()
     {

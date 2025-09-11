@@ -6,7 +6,7 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
     // find the prefab card canvas group
     public CanvasGroup canvasGroup;
     public static int discardedCardCount = 0; // Track globally
-
+    public Pegging pegging; // Reference to the Pegging script
     public void OnDrop(PointerEventData eventData)
     {
         GameObject droppedCard = eventData.pointerDrag;
@@ -85,6 +85,11 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
                     }
 
                     // Tell Pegging that this card has been played
+                    if (pegging != null)
+                    {
+                        pegging.AddToScore(1); // Add 1 to pegging score for each card played
+                        Debug.Log("Card played. Current Pegging Score: " + pegging.currentScore);
+                    }
 
                     // Card that has been played can no longer be dragged
                     CardDragHandler dragHandler = droppedCard.GetComponent<CardDragHandler>();

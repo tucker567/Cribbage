@@ -1056,6 +1056,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardDropHandler
   canvasGroup: {fileID: -2166190848364229430, guid: 7333ecd4e9b516f488777dc74b0da821, type: 3}
+  pegging: {fileID: 795586566}
 --- !u!61 &1020150991
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1694,10 +1695,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4899704db3e3efc459d3f92a3db7a8c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeckUIController
-  drawButton: {fileID: 0}
   deckController: {fileID: 491392968}
   handUIController: {fileID: 71617795}
-  numberOfCardsToDraw: 5
+  numberOfCardsToDraw: 8
 --- !u!4 &1685546409
 Transform:
   m_ObjectHideFlags: 0
@@ -1764,6 +1764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardDropHandler
   canvasGroup: {fileID: 0}
+  pegging: {fileID: 795586566}
 --- !u!61 &1957848514
 BoxCollider2D:
   m_ObjectHideFlags: 0
