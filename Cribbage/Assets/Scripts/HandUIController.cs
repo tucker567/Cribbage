@@ -9,6 +9,9 @@ public class HandUIController : MonoBehaviour
     private List<GameObject> fixedCardUIObjects = new List<GameObject>(); // Cards not to be shuffled
     public GameObject playArea; // Reference to the PlayArea GameObject
 
+    public Pegging pegging; // Assign in inspector or via script
+    public MainDeck MainDeck; // Assign in inspector or via script
+
     public void AddCardToHand(Sprite cardArtwork, string suitNumber, string cardNumber)
     {
         GameObject newCard = Instantiate(cardUIPrefab, handArea);
@@ -60,6 +63,14 @@ public class HandUIController : MonoBehaviour
     {
         Debug.Log("Shuffling played cards...");
 
+        // Move any cards left in hand to playArea
+        for (int i = cardUIObjects.Count - 1; i >= 0; i--)
+        {
+            GameObject card = cardUIObjects[i];
+            card.transform.SetParent(playArea.transform);
+            cardUIObjects.RemoveAt(i);
+        }
+
         // Collect all children of playArea named "CardUI(Clone)"
         List<GameObject> playedCards = new List<GameObject>();
         for (int i = 0; i < playArea.transform.childCount; i++)
@@ -69,6 +80,18 @@ public class HandUIController : MonoBehaviour
             {
                 playedCards.Add(child.gameObject);
             }
+        }
+
+        // Add a random starter card from the deck
+        GameObject starterCardGO = MainDeck != null ? MainDeck.GetRandomCardNotInList(playedCards) : null;
+        if (starterCardGO != null)
+        {
+            starterCardGO.transform.SetParent(playArea.transform);
+            playedCards.Add(starterCardGO);
+        }
+        else
+        {
+            Debug.LogWarning("Starter card could not be generated!");
         }
 
         // Shuffle the playedCards list
@@ -83,12 +106,47 @@ public class HandUIController : MonoBehaviour
         // Arrange shuffled cards in playArea with spacing, animating them smoothly
         float spacing = 100f;
         float startX = -(playedCards.Count - 1) * spacing / 2;
-        float downY = playedCards.Count > 0 ? playedCards[0].GetComponent<RectTransform>().anchoredPosition.y - 80f : 0f;
+        float downY = 0f;
+        if (playedCards.Count > 0)
+        {
+            var rect = playedCards[0].GetComponent<RectTransform>();
+            if (rect != null)
+                downY = rect.anchoredPosition.y - 80f;
+            else
+                downY = -80f;
+        }
         for (int i = 0; i < playedCards.Count; i++)
         {
             RectTransform cardTransform = playedCards[i].GetComponent<RectTransform>();
-            Vector2 targetPosition = new Vector2(startX + i * spacing, downY);
-            StartCoroutine(AnimateCardToPosition(cardTransform, targetPosition));
+            if (cardTransform != null)
+            {
+                Vector2 targetPosition = new Vector2(startX + i * spacing, downY);
+                StartCoroutine(AnimateCardToPosition(cardTransform, targetPosition));
+            }
+        }
+
+        // Score the final hand using Pegging
+        List<CardUIController> hand = new List<CardUIController>();
+        CardUIController starterCard = null;
+        foreach (var go in playedCards)
+        {
+            var cardUI = go.GetComponent<CardUIController>();
+            if (cardUI != null)
+            {
+                if (go == starterCardGO)
+                    starterCard = cardUI;
+                else
+                    hand.Add(cardUI);
+            }
+        }
+        if (pegging != null && hand.Count == 4 && starterCard != null)
+        {
+            int score = pegging.ScoreFinalHand(hand, starterCard);
+            Debug.Log("Final hand scored: " + score + " points");
+        }
+        else
+        {
+            Debug.LogWarning("Scoring skipped: hand.Count=" + hand.Count + ", starterCard=" + (starterCard != null));
         }
     }
 
@@ -122,5 +180,4 @@ public class HandUIController : MonoBehaviour
         }
         cardTransform.anchoredPosition = targetPosition;
     }
-    
 }

@@ -297,6 +297,8 @@ MonoBehaviour:
   cardUIPrefab: {fileID: 2825442909890637975, guid: 7333ecd4e9b516f488777dc74b0da821, type: 3}
   cardUIObjects: []
   playArea: {fileID: 1020150988}
+  pegging: {fileID: 795586566}
+  MainDeck: {fileID: 1128597185}
 --- !u!4 &71617796
 Transform:
   m_ObjectHideFlags: 0

@@ -172,4 +172,162 @@ public class Pegging : MonoBehaviour
 
         return maxRun; // points = length of the run
     }
+
+    // Add to Pegging.cs
+    public int ScoreFinalHand(List<CardUIController> hand, CardUIController starterCard)
+    {
+        // Combine hand and starter for scoring
+        List<CardUIController> allCards = new List<CardUIController>(hand);
+        allCards.Add(starterCard);
+
+        int points = 0;
+        points += CountFifteens(allCards) * 2;
+        points += CountPairs(allCards);
+        points += CountRuns(allCards);
+        points += CountFlush(hand, starterCard);
+        points += CountNobs(hand, starterCard);
+
+        AddToScore(points);
+        return points;
+    }
+
+    // Count all unique combinations of cards that sum to 15
+    private int CountFifteens(List<CardUIController> cards)
+    {
+        int count = 0;
+        int n = cards.Count;
+        int[] values = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            int rank = GetRank(cards[i]);
+            values[i] = GetPeggingValue(rank);
+        }
+
+        // Check all combinations (2 to n cards)
+        for (int size = 2; size <= n; size++)
+        {
+            int[] indices = new int[size];
+            System.Action<int, int> comb = null;
+            comb = (start, depth) =>
+            {
+                if (depth == size)
+                {
+                    int sum = 0;
+                    for (int j = 0; j < size; j++) sum += values[indices[j]];
+                    if (sum == 15) count++;
+                    return;
+                }
+                for (int i = start; i < n; i++)
+                {
+                    indices[depth] = i;
+                    comb(i + 1, depth + 1);
+                }
+            };
+            comb(0, 0);
+        }
+        return count;
+    }
+
+    // Count pairs, 3-of-a-kind, 4-of-a-kind (pairs = 2 pts, 3-of-a-kind = 6 pts, 4-of-a-kind = 12 pts)
+    private int CountPairs(List<CardUIController> cards)
+    {
+        int points = 0;
+        int n = cards.Count;
+        Dictionary<int, int> rankCounts = new Dictionary<int, int>();
+        for (int i = 0; i < n; i++)
+        {
+            int rank = GetRank(cards[i]);
+            if (!rankCounts.ContainsKey(rank)) rankCounts[rank] = 0;
+            rankCounts[rank]++;
+        }
+        foreach (var kvp in rankCounts)
+        {
+            int count = kvp.Value;
+            if (count == 2) points += 2;
+            else if (count == 3) points += 6;
+            else if (count == 4) points += 12;
+        }
+        return points;
+    }
+
+    // Count runs (sequences of 3 or more consecutive ranks, each run scores its length)
+    private int CountRuns(List<CardUIController> cards)
+    {
+        int maxRun = 0;
+        int n = cards.Count;
+        List<int> ranks = new List<int>();
+        for (int i = 0; i < n; i++) ranks.Add(GetRank(cards[i]));
+        ranks.Sort();
+
+        // Check all combinations of 3 or more cards
+        for (int size = 3; size <= n; size++)
+        {
+            int[] indices = new int[size];
+            System.Action<int, int> comb = null;
+            comb = (start, depth) =>
+            {
+                if (depth == size)
+                {
+                    List<int> runRanks = new List<int>();
+                    for (int j = 0; j < size; j++) runRanks.Add(ranks[indices[j]]);
+                    runRanks.Sort();
+                    bool isRun = true;
+                    for (int k = 1; k < runRanks.Count; k++)
+                    {
+                        if (runRanks[k] != runRanks[k - 1] + 1)
+                        {
+                            isRun = false;
+                            break;
+                        }
+                    }
+                    if (isRun) maxRun = Mathf.Max(maxRun, size);
+                    return;
+                }
+                for (int i = start; i < n; i++)
+                {
+                    indices[depth] = i;
+                    comb(i + 1, depth + 1);
+                }
+            };
+            comb(0, 0);
+        }
+        return maxRun;
+    }
+
+    // Count flushes (4 points for 4-card flush, 5 for 5-card flush including starter)
+    private int CountFlush(List<CardUIController> hand, CardUIController starterCard)
+    {
+        if (hand.Count < 4) return 0;
+        string suit = hand[0].suitNumber;
+        bool allSame = true;
+        for (int i = 1; i < hand.Count; i++)
+        {
+            if (hand[i].suitNumber != suit)
+            {
+                allSame = false;
+                break;
+            }
+        }
+        if (!allSame) return 0;
+        // 4-card flush
+        int points = 4;
+        // 5-card flush (starter matches)
+        if (starterCard != null && starterCard.suitNumber == suit) points = 5;
+        return points;
+    }
+
+    // Count nobs (Jack in hand matches starter's suit)
+    private int CountNobs(List<CardUIController> hand, CardUIController starterCard)
+    {
+        if (starterCard == null) return 0;
+        foreach (var card in hand)
+        {
+            int rank = GetRank(card);
+            if (rank == 11 && card.suitNumber == starterCard.suitNumber)
+            {
+                return 1;
+            }
+        }
+        return 0;
+    }
 }
