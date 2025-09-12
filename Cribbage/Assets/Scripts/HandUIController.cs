@@ -11,6 +11,7 @@ public class HandUIController : MonoBehaviour
 
     public Pegging pegging; // Assign in inspector or via script
     public MainDeck MainDeck; // Assign in inspector or via script
+    public GameObject deck; // Reference to the Deck GameObject/image
 
     public void AddCardToHand(Sprite cardArtwork, string suitNumber, string cardNumber)
     {
