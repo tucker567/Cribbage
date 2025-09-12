@@ -28,12 +28,21 @@ public class MainDeck : MonoBehaviour
         if (available.Count == 0) return null;
 
         CardDefinition chosen = available[Random.Range(0, available.Count)];
-        // Instantiate a new card UI for the starter
-        GameObject cardUIPrefab = FindObjectOfType<HandUIController>().cardUIPrefab;
+        HandUIController handUI = FindObjectOfType<HandUIController>();
+        GameObject cardUIPrefab = handUI.cardUIPrefab;
         GameObject starterCard = Instantiate(cardUIPrefab);
+
         CardUIController cardUI = starterCard.GetComponent<CardUIController>();
         cardUI.SetCardArt(chosen.artwork);
         cardUI.SetCardNumberAndSuit(chosen.suitNumber, chosen.number);
+
+        // Spawn at deck position
+        if (handUI.deck != null)
+        {
+            starterCard.transform.SetParent(handUI.deck.transform.parent, false);
+            starterCard.transform.position = handUI.deck.transform.position;
+        }
+
         return starterCard;
     }
 }
