@@ -106,30 +106,22 @@ public class HandUIController : MonoBehaviour
 
         // Arrange shuffled cards in playArea with spacing, animating them smoothly
         float spacing = 100f;
-        RectTransform playAreaRect = playArea.GetComponent<RectTransform>();
-        float centerX = 0f;
-        float centerY = 0f;
-        if (playAreaRect != null)
+        float startX = -(playedCards.Count - 1) * spacing / 2;
+        float downY = 0f;
+        if (playedCards.Count > 0)
         {
-            centerX = playAreaRect.rect.width / 2f;
-            centerY = playAreaRect.rect.height / 2f;
+            var rect = playedCards[0].GetComponent<RectTransform>();
+            if (rect != null)
+                downY = rect.anchoredPosition.y - 80f;
+            else
+                downY = -80f;
         }
-        else
-        {
-            centerX = 0f;
-            centerY = 0f;
-        }
-        float groupWidth = (playedCards.Count - 1) * spacing;
-        float leftShift = 100f; // Change this value to 100 or 200 as needed
-        float startX = centerX - groupWidth / 2f - leftShift;
-        float targetY = -310f; // Fixed vertical position
-
         for (int i = 0; i < playedCards.Count; i++)
         {
             RectTransform cardTransform = playedCards[i].GetComponent<RectTransform>();
             if (cardTransform != null)
             {
-                Vector2 targetPosition = new Vector2(startX + i * spacing, targetY); // x centered, y fixed
+                Vector2 targetPosition = new Vector2(startX + i * spacing, downY);
                 StartCoroutine(AnimateCardToPosition(cardTransform, targetPosition));
             }
         }
@@ -163,7 +155,7 @@ public class HandUIController : MonoBehaviour
     private System.Collections.IEnumerator AnimateCardToPosition(RectTransform cardTransform, Vector2 targetPosition)
     {
         Vector2 startPosition = cardTransform.anchoredPosition;
-        Vector2 downPosition = new Vector2(startPosition.x, startPosition.y - 0f);
+        Vector2 downPosition = new Vector2(startPosition.x, startPosition.y - 80f);
         float durationDown = 0.6f;
         float durationOut = 1.0f;
         float elapsed = 0f;
