@@ -83,11 +83,19 @@ public class HandUIController : MonoBehaviour
             }
         }
 
-        // Add a random starter card from the deck
+        // Add a random starter card from the deck, spawn it at the deck's position
         GameObject starterCardGO = MainDeck != null ? MainDeck.GetRandomCardNotInList(playedCards) : null;
         if (starterCardGO != null)
         {
+            // Set starter card's parent to playArea, but spawn at deck's position
             starterCardGO.transform.SetParent(playArea.transform);
+            RectTransform starterRect = starterCardGO.GetComponent<RectTransform>();
+            if (deck != null && starterRect != null)
+            {
+                // Set position to deck's position in playArea's local space
+                Vector2 deckLocalPos = playArea.transform.InverseTransformPoint(deck.transform.position);
+                starterRect.anchoredPosition = deckLocalPos;
+            }
             playedCards.Add(starterCardGO);
         }
         else

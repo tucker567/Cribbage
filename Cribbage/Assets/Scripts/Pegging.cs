@@ -19,6 +19,8 @@ public class Pegging : MonoBehaviour
     // Last ranks played in the current sequence (since last reset/Go/31)
     private readonly List<int> recentRanks = new List<int>();
 
+    public TextSpawner textSpawner; // Reference to TextSpawner to show pegging points
+
     // Try to play a card. Returns false if the play would exceed 31 (card must be returned).
     public bool TryPlayCard(CardUIController cardUI, out int pointsAwarded)
     {
@@ -173,7 +175,7 @@ public class Pegging : MonoBehaviour
         return maxRun; // points = length of the run
     }
 
-    // Add to Pegging.cs
+    // Score the final hand (4 cards + starter) after the pegging round
     public int ScoreFinalHand(List<CardUIController> hand, CardUIController starterCard)
     {
         // Combine hand and starter for scoring

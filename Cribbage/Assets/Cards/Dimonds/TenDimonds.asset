@@ -15,5 +15,5 @@ MonoBehaviour:
   cardName: TenDimonds
   artwork: {fileID: 2671263234315260144, guid: 516d7e78ecc2c984fb3c436579835bb8, type: 3}
   backArtwork: {fileID: -7336099306971489684, guid: 822d5ea086413d54bb99b7a632fdcce9, type: 3}
-  number: 
-  suitNumber: 
+  number: 10
+  suitNumber: 3
