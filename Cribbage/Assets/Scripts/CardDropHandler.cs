@@ -43,6 +43,7 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
                     CardUIController cardUI = droppedCard.GetComponent<CardUIController>();
                     if (cardUI != null)
                     {
+                        cardUI.isDiscarded = true; // <-- Mark as discarded
                         Debug.Log("Card discarded: " + droppedCard.name + " (Suit: " + cardUI.suitNumber + ", Number: " + cardUI.number + ")");
                     }
 

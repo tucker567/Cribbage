@@ -13,6 +13,8 @@ public class HandUIController : MonoBehaviour
     public Pegging pegging; // Assign in inspector or via script
     public MainDeck MainDeck; // Assign in inspector or via script
     public GameObject deck; // Reference to the Deck GameObject/image
+    public CardDropHandler cardDropHandler; // Reference to CardDropHandler script
+    public GameObject discardPile; // Assign this in the inspector
 
     public void AddCardToHand(Sprite cardArtwork, string suitNumber, string cardNumber)
     {
@@ -158,6 +160,9 @@ public class HandUIController : MonoBehaviour
         {
             Debug.LogWarning("Scoring skipped: hand.Count=" + hand.Count + ", starterCard=" + (starterCard != null));
         }
+
+        // Call DiscardHandScoring after scoring the first hand
+        DiscardHandScoring();
     }
 
     // Coroutine to animate card moving down then out to its target position
@@ -189,5 +194,104 @@ public class HandUIController : MonoBehaviour
             yield return null;
         }
         cardTransform.anchoredPosition = targetPosition;
+    }
+
+    public void DiscardHandScoring()
+    {
+        List<GameObject> discardedCards = new List<GameObject>();
+        for (int i = 0; i < discardPile.transform.childCount; i++)
+        {
+            Transform child = discardPile.transform.GetChild(i);
+            CardUIController cardUI = child.GetComponent<CardUIController>();
+            if (cardUI != null && cardUI.isDiscarded)
+            {
+                discardedCards.Add(child.gameObject);
+            }
+        }
+
+        if (discardedCards.Count != 2)
+        {
+            Debug.LogError("Crib hand must have exactly 2 discarded cards.");
+            return;
+        }
+
+        // Step 2: Draw three new cards from the deck (not already in playArea)
+        List<GameObject> newCards = new List<GameObject>();
+        List<GameObject> exclude = new List<GameObject>(discardedCards);
+        for (int i = 0; i < 3; i++)
+        {
+            GameObject newCard = MainDeck.GetRandomCardNotInList(exclude);
+            if (newCard != null)
+            {
+                newCards.Add(newCard);
+                exclude.Add(newCard); // Prevent duplicates
+            }
+            else
+            {
+                Debug.LogError("Not enough cards in the deck to draw three new cards.");
+                return;
+            }
+        }
+
+        // Step 3: Combine the discarded cards and new cards into a new crib hand
+        List<GameObject> cribHand = new List<GameObject>();
+        cribHand.AddRange(discardedCards);
+        cribHand.AddRange(newCards);
+
+        // Step 4: Shuffle the cribHand list
+        for (int i = 0; i < cribHand.Count; i++)
+        {
+            int rnd = Random.Range(i, cribHand.Count);
+            GameObject temp = cribHand[rnd];
+            cribHand[rnd] = cribHand[i];
+            cribHand[i] = temp;
+        }
+
+        // Step 5: Arrange the crib hand underneath the played cards (centered, spaced, lower Y)
+        float spacing = 100f;
+        float startX = -(cribHand.Count - 1) * spacing / 2;
+        float downY = -350f; // Lower than played cards
+        for (int i = 0; i < cribHand.Count; i++)
+        {
+            GameObject card = cribHand[i];
+            card.transform.SetParent(playArea.transform);
+            RectTransform cardTransform = card.GetComponent<RectTransform>();
+            if (cardTransform != null)
+            {
+                Vector2 targetPosition = new Vector2(startX + i * spacing, downY);
+                StartCoroutine(AnimateCardToPosition(cardTransform, targetPosition));
+            }
+        }
+
+        // Step 6: Tally up the points using the existing scoring logic (no starter card for crib)
+        List<CardUIController> cardControllers = new List<CardUIController>();
+        foreach (GameObject card in cribHand)
+        {
+            CardUIController cardUI = card.GetComponent<CardUIController>();
+            if (cardUI != null)
+            {
+                cardControllers.Add(cardUI);
+            }
+        }
+
+        // Step 7: Score after animation
+        StartCoroutine(ScoreCribAfterAnimation(cardControllers));
+    }
+
+    private IEnumerator ScoreCribAfterAnimation(List<CardUIController> cribCards)
+    {
+        float animationDuration = 1.6f;
+        yield return new WaitForSeconds(animationDuration);
+
+        if (pegging != null && cribCards.Count == 5)
+        {
+            // Score the crib hand (no starter card)
+            yield return pegging.StartCoroutine(pegging.ScoreFinalHandWithTextSequential(cribCards, null));
+            Debug.Log("Crib hand scored (sequential): " + pegging.currentScore + " points");
+        }
+        else
+        {
+            Debug.LogError("Crib scoring failed: incorrect number of cards or missing Pegging reference.");
+        }
     }
 }
