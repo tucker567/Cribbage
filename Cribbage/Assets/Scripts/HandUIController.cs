@@ -15,6 +15,7 @@ public class HandUIController : MonoBehaviour
     public GameObject deck; // Reference to the Deck GameObject/image
     public CardDropHandler cardDropHandler; // Reference to CardDropHandler script
     public GameObject discardPile; // Assign this in the inspector
+    public GameLoopControler gameLoopControler; // Reference to GameLoopControler script
 
     public void AddCardToHand(Sprite cardArtwork, string suitNumber, string cardNumber)
     {
@@ -285,7 +286,6 @@ public class HandUIController : MonoBehaviour
 
         if (pegging != null && cribCards.Count == 5)
         {
-            // Score the crib hand (no starter card)
             yield return pegging.StartCoroutine(pegging.ScoreFinalHandWithTextSequential(cribCards, null));
             Debug.Log("Crib hand scored (sequential): " + pegging.currentScore + " points");
         }
@@ -293,5 +293,8 @@ public class HandUIController : MonoBehaviour
         {
             Debug.LogError("Crib scoring failed: incorrect number of cards or missing Pegging reference.");
         }
+
+        // Automatically end the round
+        gameLoopControler?.EndRound();
     }
 }

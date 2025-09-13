@@ -14,13 +14,12 @@ public class DeckController : MonoBehaviour
     }
 
     // Initialize the deck with all cards from the MainDeck
-    private void InitializeDeck()
+    public void InitializeDeck()
     {
         currentDeck = new List<CardDefinition>(mainDeck.CardDefinitions);
     }
 
-    // Shuffle the deck
-    private void ShuffleDeck()
+    public void ShuffleDeck()
     {
         for (int i = 0; i < currentDeck.Count; i++)
         {

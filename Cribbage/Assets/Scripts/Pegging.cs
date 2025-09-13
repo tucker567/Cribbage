@@ -146,7 +146,7 @@ public class Pegging : MonoBehaviour
         UpdateCountDisplay();
     }
 
-    private void UpdateScoreDisplay()
+    public void UpdateScoreDisplay()
     {
         if (scoreText != null)
         {
