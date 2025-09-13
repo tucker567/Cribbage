@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.XR;
+using System.Collections;
 
 public class CardDropHandler : MonoBehaviour, IDropHandler
 {
@@ -11,6 +12,7 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
     public HandUIController handUIController; // Reference to HandUIController
     public GameObject doneButton; // Reference to button to be able to make it visible when two cards have been discarded
     public GameObject countText; // Reference to the text object that shows the current count
+    public PointSpawner pointSpawner; // Reference to the PointSpawner script
 
     public void OnDrop(PointerEventData eventData)
     {
@@ -160,7 +162,8 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
         // Disable the done button after all cards have been played
         doneButton.SetActive(false);
         countText.SetActive(false); // Hide the count text when all cards have been played
-
+        pointSpawner.SpawnPoint();
+        pegging?.AllCardsPlayed();
     }
 
     // done button for if player decides all posible cards have been played
@@ -170,4 +173,5 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
         doneButton.SetActive(false);
         countText.SetActive(false); // Hide the count text when done is clicked
     }
+
 }

@@ -13,6 +13,8 @@ public class Pegging : MonoBehaviour
     // Temporary placeholder for the score during pegging
     public int currentScore = 0;
 
+    public float timeBetweenPoints = 0.3f;
+
     // UI
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI countText;
@@ -54,15 +56,13 @@ public class Pegging : MonoBehaviour
         {
             pointsAwarded += 2;
             scoringEvents.Add("+2 for fifteen");
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
+            StartCoroutine(SpawnPointsWithDelay(2, timeBetweenPoints));
         }
         if (runningTotal == 31)
         {
             pointsAwarded += 2;
             scoringEvents.Add("+2 for thirty-one");
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
+            StartCoroutine(SpawnPointsWithDelay(2, timeBetweenPoints));
         }
 
         // Pair/Three/Four of a kind: count consecutive same ranks from end (before adding current)
@@ -76,36 +76,19 @@ public class Pegging : MonoBehaviour
         {
             pointsAwarded += 2;
             scoringEvents.Add("+2 for pair");
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
+            StartCoroutine(SpawnPointsWithDelay(2, timeBetweenPoints));
         }
         else if (pairStreak == 3)
         {
             pointsAwarded += 6;
             scoringEvents.Add("+6 for three-of-a-kind");
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
+            StartCoroutine(SpawnPointsWithDelay(6, timeBetweenPoints));
         }
         else if (pairStreak == 4)
         {
             pointsAwarded += 12;
             scoringEvents.Add("+12 for four-of-a-kind");
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
-            pointSpawner.SpawnPoint();
+            StartCoroutine(SpawnPointsWithDelay(12, timeBetweenPoints));
         }
 
         // Add the current rank to the recent list for run detection
@@ -117,6 +100,7 @@ public class Pegging : MonoBehaviour
         {
             pointsAwarded += runPoints;
             scoringEvents.Add($"+{runPoints} for run of {runPoints}");
+            StartCoroutine(SpawnPointsWithDelay(runPoints, timeBetweenPoints));
         }
 
         // Show floating text for each scoring event
@@ -270,7 +254,7 @@ public class Pegging : MonoBehaviour
             textSpawner?.SpawnFloatingText($"{pts} points for {fifteens} fifteen(s)");
             for (int i = 0; i < pts; i++)
             {
-                pointSpawner.SpawnPoint();
+                StartCoroutine(SpawnPointsWithDelay(1, timeBetweenPoints));
             }
         }
 
@@ -281,7 +265,7 @@ public class Pegging : MonoBehaviour
             textSpawner?.SpawnFloatingText($"{pairs} points for pairs");
             for (int i = 0; i < pairs; i++)
             {
-                pointSpawner.SpawnPoint();
+                StartCoroutine(SpawnPointsWithDelay(1, timeBetweenPoints));
             }
         }
 
@@ -292,7 +276,7 @@ public class Pegging : MonoBehaviour
             textSpawner?.SpawnFloatingText($"{runs} points for run(s)");
             for (int i = 0; i < runs; i++)
             {
-                pointSpawner.SpawnPoint();
+                StartCoroutine(SpawnPointsWithDelay(1, timeBetweenPoints));
             }
         }
 
@@ -303,7 +287,7 @@ public class Pegging : MonoBehaviour
             textSpawner?.SpawnFloatingText($"{flush} points for flush");
             for (int i = 0; i < flush; i++)
             {
-                pointSpawner.SpawnPoint();
+                StartCoroutine(SpawnPointsWithDelay(1, timeBetweenPoints));
             }
         }
 
@@ -314,7 +298,7 @@ public class Pegging : MonoBehaviour
             textSpawner?.SpawnFloatingText($"{nobs} point for nobs");
             for (int i = 0; i < nobs; i++)
             {
-                pointSpawner.SpawnPoint();
+                StartCoroutine(SpawnPointsWithDelay(1, timeBetweenPoints));
             }
         }
 
@@ -333,42 +317,27 @@ public class Pegging : MonoBehaviour
         int fifteens = CountFifteens(allCards);
         if (fifteens > 0)
             events.Add(($"+{fifteens * 2} for {fifteens} fifteens", fifteens * 2));
-            for (int i = 0; i < fifteens * 2; i++)
-            {
-                pointSpawner.SpawnPoint();
-            }
+            StartCoroutine(SpawnPointsWithDelay(fifteens * 2, timeBetweenPoints));
 
         int pairs = CountPairs(allCards);
         if (pairs > 0)
             events.Add(($"+{pairs} for pairs", pairs));
-            for (int i = 0; i < pairs; i++)
-            {
-                pointSpawner.SpawnPoint();
-            }
+            StartCoroutine(SpawnPointsWithDelay(pairs, timeBetweenPoints));
 
         int runs = CountRuns(allCards);
         if (runs > 0)
             events.Add(($"+{runs} for runs", runs));
-            for (int i = 0; i < runs; i++)
-            {
-                pointSpawner.SpawnPoint();
-            }
+            StartCoroutine(SpawnPointsWithDelay(runs, timeBetweenPoints));
 
         int flush = CountFlush(hand, starterCard);
         if (flush > 0)
             events.Add(($"+{flush} for flush", flush));
-            for (int i = 0; i < flush; i++)
-            {
-                pointSpawner.SpawnPoint();
-            }
+            StartCoroutine(SpawnPointsWithDelay(flush, timeBetweenPoints));
 
         int nobs = CountNobs(hand, starterCard);
         if (nobs > 0)
             events.Add(($"+{nobs} for nobs", nobs));
-            for (int i = 0; i < nobs; i++)
-            {
-                pointSpawner.SpawnPoint();
-            }
+            StartCoroutine(SpawnPointsWithDelay(nobs, timeBetweenPoints));
 
         foreach (var (msg, pts) in events)
         {
@@ -516,5 +485,20 @@ public class Pegging : MonoBehaviour
             }
         }
         return 0;
+    }
+
+    public void AllCardsPlayed() // when all cards have been played, move cards in play area down arrange them, then tally points
+    {
+        textSpawner?.SpawnFloatingText("+1 All cards played!");
+        AddToScore(1);
+    }
+
+    private IEnumerator SpawnPointsWithDelay(int count, float delay)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            pointSpawner.SpawnPoint();
+            yield return new WaitForSeconds(delay);
+        }
     }
 }

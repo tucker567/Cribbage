@@ -4,20 +4,18 @@ using UnityEngine;
 public class PointSpawner : MonoBehaviour
 {
     public GameObject pointPrefab; // Reference to the Point prefab
-    public Transform spawnPoint;   // Reference to the SpawnPoint transform
     public Transform jar;          // Reference to the jar (Image)
     public Transform canvas;       // Reference to the Canvas
 
-    public float minX = 750f;
-    public float maxX = 770f;
-    private float textNum = 100f;
+    public float minX = 700f;
+    public float maxX = 800f;
 
     public void SpawnPoint()
     {
         Debug.Log("Spawning point");
-        if (pointPrefab == null || spawnPoint == null || canvas == null)
+        if (pointPrefab == null || canvas == null)
         {
-            Debug.LogWarning("PointPrefab, SpawnPoint, or Canvas is not assigned.");
+            Debug.LogWarning("PointPrefab or Canvas is not assigned.");
             return;
         }
 
@@ -40,16 +38,4 @@ public class PointSpawner : MonoBehaviour
         }
     }
 
-    public void Loop()
-    {
-        for (int i = 0; i < textNum; i++)
-        {
-            SpawnPoint();
-        }
-    }
-    
-    void Start()
-    {
-        Loop();
-    }
 }
