@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -44,9 +45,20 @@ public class Pegging : MonoBehaviour
         // Update running total
         runningTotal += val;
 
+        // Track scoring events for text
+        List<string> scoringEvents = new List<string>();
+
         // Score 15 or 31
-        if (runningTotal == 15) pointsAwarded += 2;
-        if (runningTotal == 31) pointsAwarded += 2;
+        if (runningTotal == 15)
+        {
+            pointsAwarded += 2;
+            scoringEvents.Add("+2 for fifteen");
+        }
+        if (runningTotal == 31)
+        {
+            pointsAwarded += 2;
+            scoringEvents.Add("+2 for thirty-one");
+        }
 
         // Pair/Three/Four of a kind: count consecutive same ranks from end (before adding current)
         int pairStreak = 1; // include current
@@ -55,16 +67,41 @@ public class Pegging : MonoBehaviour
             if (recentRanks[i] == rank) pairStreak++;
             else break;
         }
-        if (pairStreak == 2) pointsAwarded += 2;      // pair
-        else if (pairStreak == 3) pointsAwarded += 6; // three-of-a-kind
-        else if (pairStreak == 4) pointsAwarded += 12;// four-of-a-kind
+        if (pairStreak == 2)
+        {
+            pointsAwarded += 2;
+            scoringEvents.Add("+2 for pair");
+        }
+        else if (pairStreak == 3)
+        {
+            pointsAwarded += 6;
+            scoringEvents.Add("+6 for three-of-a-kind");
+        }
+        else if (pairStreak == 4)
+        {
+            pointsAwarded += 12;
+            scoringEvents.Add("+12 for four-of-a-kind");
+        }
 
         // Add the current rank to the recent list for run detection
         recentRanks.Add(rank);
 
         // Runs: longest run in the tail segment with all distinct ranks
         int runPoints = ComputeRunPointsFromTail(recentRanks);
-        pointsAwarded += runPoints;
+        if (runPoints >= 3)
+        {
+            pointsAwarded += runPoints;
+            scoringEvents.Add($"+{runPoints} for run of {runPoints}");
+        }
+
+        // Show floating text for each scoring event
+        if (textSpawner != null)
+        {
+            foreach (var msg in scoringEvents)
+            {
+                textSpawner.SpawnFloatingText(msg);
+            }
+        }
 
         // Apply score
         AddToScore(pointsAwarded);
@@ -191,6 +228,89 @@ public class Pegging : MonoBehaviour
 
         AddToScore(points);
         return points;
+    }
+
+    public int ScoreFinalHandWithText(List<CardUIController> hand, CardUIController starterCard)
+    {
+        List<CardUIController> allCards = new List<CardUIController>(hand);
+        allCards.Add(starterCard);
+
+        int points = 0;
+
+        int fifteens = CountFifteens(allCards);
+        if (fifteens > 0)
+        {
+            int pts = fifteens * 2;
+            points += pts;
+            textSpawner?.SpawnFloatingText($"{pts} points for {fifteens} fifteen(s)");
+        }
+
+        int pairs = CountPairs(allCards);
+        if (pairs > 0)
+        {
+            points += pairs;
+            textSpawner?.SpawnFloatingText($"{pairs} points for pairs");
+        }
+
+        int runs = CountRuns(allCards);
+        if (runs > 0)
+        {
+            points += runs;
+            textSpawner?.SpawnFloatingText($"{runs} points for run(s)");
+        }
+
+        int flush = CountFlush(hand, starterCard);
+        if (flush > 0)
+        {
+            points += flush;
+            textSpawner?.SpawnFloatingText($"{flush} points for flush");
+        }
+
+        int nobs = CountNobs(hand, starterCard);
+        if (nobs > 0)
+        {
+            points += nobs;
+            textSpawner?.SpawnFloatingText($"{nobs} point for nobs");
+        }
+
+        AddToScore(points); // Update score at the same time as text
+        return points;
+    }
+
+    public IEnumerator ScoreFinalHandWithTextSequential(List<CardUIController> hand, CardUIController starterCard)
+    {
+        List<CardUIController> allCards = new List<CardUIController>(hand);
+        allCards.Add(starterCard);
+
+        int points = 0;
+        List<(string, int)> events = new List<(string, int)>();
+
+        int fifteens = CountFifteens(allCards);
+        if (fifteens > 0)
+            events.Add(($"+{fifteens * 2} for {fifteens} fifteens", fifteens * 2));
+
+        int pairs = CountPairs(allCards);
+        if (pairs > 0)
+            events.Add(($"+{pairs} for pairs", pairs));
+
+        int runs = CountRuns(allCards);
+        if (runs > 0)
+            events.Add(($"+{runs} for runs", runs));
+
+        int flush = CountFlush(hand, starterCard);
+        if (flush > 0)
+            events.Add(($"+{flush} for flush", flush));
+
+        int nobs = CountNobs(hand, starterCard);
+        if (nobs > 0)
+            events.Add(($"+{nobs} for nobs", nobs));
+
+        foreach (var (msg, pts) in events)
+        {
+            textSpawner?.SpawnFloatingText(msg);
+            AddToScore(pts);
+            yield return new WaitForSeconds(textSpawner.fadeDuration * 0.7f); // Overlap a bit for smoothness
+        }
     }
 
     // Count all unique combinations of cards that sum to 15

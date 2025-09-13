@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
 public class HandUIController : MonoBehaviour
 {
@@ -115,15 +116,7 @@ public class HandUIController : MonoBehaviour
         // Arrange shuffled cards in playArea with spacing, animating them smoothly
         float spacing = 100f;
         float startX = -(playedCards.Count - 1) * spacing / 2;
-        float downY = 0f;
-        if (playedCards.Count > 0)
-        {
-            var rect = playedCards[0].GetComponent<RectTransform>();
-            if (rect != null)
-                downY = rect.anchoredPosition.y - 80f;
-            else
-                downY = -80f;
-        }
+        float downY = -200f; // Use a fixed Y position for all cards
         for (int i = 0; i < playedCards.Count; i++)
         {
             RectTransform cardTransform = playedCards[i].GetComponent<RectTransform>();
@@ -134,7 +127,15 @@ public class HandUIController : MonoBehaviour
             }
         }
 
-        // Score the final hand using Pegging
+        // After arranging and animating, start coroutine to score after delay
+        StartCoroutine(ScoreHandAfterAnimation(playedCards, starterCardGO));
+    }
+
+    private IEnumerator ScoreHandAfterAnimation(List<GameObject> playedCards, GameObject starterCardGO)
+    {
+        float animationDuration = 1.6f;
+        yield return new WaitForSeconds(animationDuration);
+
         List<CardUIController> hand = new List<CardUIController>();
         CardUIController starterCard = null;
         foreach (var go in playedCards)
@@ -150,8 +151,8 @@ public class HandUIController : MonoBehaviour
         }
         if (pegging != null && hand.Count == 4 && starterCard != null)
         {
-            int score = pegging.ScoreFinalHand(hand, starterCard);
-            Debug.Log("Final hand scored: " + score + " points");
+            yield return pegging.StartCoroutine(pegging.ScoreFinalHandWithTextSequential(hand, starterCard));
+            Debug.Log("Final hand scored (sequential): " + pegging.currentScore + " points");
         }
         else
         {

@@ -10,6 +10,7 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
     public Pegging pegging; // Reference to the Pegging script
     public HandUIController handUIController; // Reference to HandUIController
     public GameObject doneButton; // Reference to button to be able to make it visible when two cards have been discarded
+    public GameObject countText; // Reference to the text object that shows the current count
 
     public void OnDrop(PointerEventData eventData)
     {
@@ -158,6 +159,8 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
         handUIController.ShufflePlayedCards();
         // Disable the done button after all cards have been played
         doneButton.SetActive(false);
+        countText.SetActive(false); // Hide the count text when all cards have been played
+
     }
 
     // done button for if player decides all posible cards have been played
@@ -165,5 +168,6 @@ public class CardDropHandler : MonoBehaviour, IDropHandler
     {
         handUIController.ShufflePlayedCards();
         doneButton.SetActive(false);
+        countText.SetActive(false); // Hide the count text when done is clicked
     }
 }
