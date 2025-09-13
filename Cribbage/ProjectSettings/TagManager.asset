@@ -8,6 +8,7 @@ TagManager:
   - Card
   - DiscardPile
   - PlayPile
+  - Point
   layers:
   - Default
   - TransparentFX

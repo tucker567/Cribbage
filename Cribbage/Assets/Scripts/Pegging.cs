@@ -21,6 +21,7 @@ public class Pegging : MonoBehaviour
     private readonly List<int> recentRanks = new List<int>();
 
     public TextSpawner textSpawner; // Reference to TextSpawner to show pegging points
+    public PointSpawner pointSpawner; // Reference to PointSpawner to spawn points
 
     // Try to play a card. Returns false if the play would exceed 31 (card must be returned).
     public bool TryPlayCard(CardUIController cardUI, out int pointsAwarded)
@@ -53,11 +54,15 @@ public class Pegging : MonoBehaviour
         {
             pointsAwarded += 2;
             scoringEvents.Add("+2 for fifteen");
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
         }
         if (runningTotal == 31)
         {
             pointsAwarded += 2;
             scoringEvents.Add("+2 for thirty-one");
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
         }
 
         // Pair/Three/Four of a kind: count consecutive same ranks from end (before adding current)
@@ -71,16 +76,36 @@ public class Pegging : MonoBehaviour
         {
             pointsAwarded += 2;
             scoringEvents.Add("+2 for pair");
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
         }
         else if (pairStreak == 3)
         {
             pointsAwarded += 6;
             scoringEvents.Add("+6 for three-of-a-kind");
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
         }
         else if (pairStreak == 4)
         {
             pointsAwarded += 12;
             scoringEvents.Add("+12 for four-of-a-kind");
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
+            pointSpawner.SpawnPoint();
         }
 
         // Add the current rank to the recent list for run detection
@@ -243,6 +268,10 @@ public class Pegging : MonoBehaviour
             int pts = fifteens * 2;
             points += pts;
             textSpawner?.SpawnFloatingText($"{pts} points for {fifteens} fifteen(s)");
+            for (int i = 0; i < pts; i++)
+            {
+                pointSpawner.SpawnPoint();
+            }
         }
 
         int pairs = CountPairs(allCards);
@@ -250,6 +279,10 @@ public class Pegging : MonoBehaviour
         {
             points += pairs;
             textSpawner?.SpawnFloatingText($"{pairs} points for pairs");
+            for (int i = 0; i < pairs; i++)
+            {
+                pointSpawner.SpawnPoint();
+            }
         }
 
         int runs = CountRuns(allCards);
@@ -257,6 +290,10 @@ public class Pegging : MonoBehaviour
         {
             points += runs;
             textSpawner?.SpawnFloatingText($"{runs} points for run(s)");
+            for (int i = 0; i < runs; i++)
+            {
+                pointSpawner.SpawnPoint();
+            }
         }
 
         int flush = CountFlush(hand, starterCard);
@@ -264,6 +301,10 @@ public class Pegging : MonoBehaviour
         {
             points += flush;
             textSpawner?.SpawnFloatingText($"{flush} points for flush");
+            for (int i = 0; i < flush; i++)
+            {
+                pointSpawner.SpawnPoint();
+            }
         }
 
         int nobs = CountNobs(hand, starterCard);
@@ -271,6 +312,10 @@ public class Pegging : MonoBehaviour
         {
             points += nobs;
             textSpawner?.SpawnFloatingText($"{nobs} point for nobs");
+            for (int i = 0; i < nobs; i++)
+            {
+                pointSpawner.SpawnPoint();
+            }
         }
 
         AddToScore(points); // Update score at the same time as text
@@ -288,22 +333,42 @@ public class Pegging : MonoBehaviour
         int fifteens = CountFifteens(allCards);
         if (fifteens > 0)
             events.Add(($"+{fifteens * 2} for {fifteens} fifteens", fifteens * 2));
+            for (int i = 0; i < fifteens * 2; i++)
+            {
+                pointSpawner.SpawnPoint();
+            }
 
         int pairs = CountPairs(allCards);
         if (pairs > 0)
             events.Add(($"+{pairs} for pairs", pairs));
+            for (int i = 0; i < pairs; i++)
+            {
+                pointSpawner.SpawnPoint();
+            }
 
         int runs = CountRuns(allCards);
         if (runs > 0)
             events.Add(($"+{runs} for runs", runs));
+            for (int i = 0; i < runs; i++)
+            {
+                pointSpawner.SpawnPoint();
+            }
 
         int flush = CountFlush(hand, starterCard);
         if (flush > 0)
             events.Add(($"+{flush} for flush", flush));
+            for (int i = 0; i < flush; i++)
+            {
+                pointSpawner.SpawnPoint();
+            }
 
         int nobs = CountNobs(hand, starterCard);
         if (nobs > 0)
             events.Add(($"+{nobs} for nobs", nobs));
+            for (int i = 0; i < nobs; i++)
+            {
+                pointSpawner.SpawnPoint();
+            }
 
         foreach (var (msg, pts) in events)
         {

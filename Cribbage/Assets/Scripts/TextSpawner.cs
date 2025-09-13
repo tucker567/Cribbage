@@ -10,6 +10,7 @@ public class TextSpawner : MonoBehaviour
     public float fadeDuration = 1f; // Duration over which the text fades out
     public float displayDuration = 1f; // Duration the text stays fully visible
     public Pegging pegging; // Reference to Pegging script to get score info
+    
 
     public void SpawnFloatingText(string message)
     {
