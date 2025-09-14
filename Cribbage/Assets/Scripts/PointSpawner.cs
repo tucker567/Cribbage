@@ -28,8 +28,6 @@ public class PointSpawner : MonoBehaviour
         // Parent the point to the Canvas
         point.transform.SetParent(canvas, false);
 
-        Debug.Log("Instantiated point: " + point.name + " at " + point.transform.position);
-
         // Optionally, apply a small force to simulate dropping
         Rigidbody2D rb = point.GetComponent<Rigidbody2D>();
         if (rb != null)
@@ -37,5 +35,4 @@ public class PointSpawner : MonoBehaviour
             rb.AddForce(Vector2.down * 50f, ForceMode2D.Impulse); // Adjust the force as needed
         }
     }
-
 }

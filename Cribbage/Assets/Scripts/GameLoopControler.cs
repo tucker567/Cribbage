@@ -23,6 +23,7 @@ public class GameLoopControler : MonoBehaviour
         // Clear hand UI
         handUIController.cardUIObjects.ForEach(card => Destroy(card));
         handUIController.cardUIObjects.Clear();
+        pegging.countText.text = "Count: " + 0;
 
         Debug.Log("Deck shuffled and hand cleared.");
 

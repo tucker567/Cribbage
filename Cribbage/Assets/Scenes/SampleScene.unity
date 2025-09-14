@@ -302,6 +302,7 @@ MonoBehaviour:
   deck: {fileID: 279305404}
   cardDropHandler: {fileID: 1020150990}
   discardPile: {fileID: 1957848511}
+  gameLoopControler: {fileID: 339627965}
 --- !u!4 &71617796
 Transform:
   m_ObjectHideFlags: 0
@@ -668,6 +669,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 279305404}
   m_CullTransparentMesh: 1
+--- !u!1 &339627964
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 339627966}
+  - component: {fileID: 339627965}
+  m_Layer: 0
+  m_Name: GameLoopControler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &339627965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339627964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7d392f087fdf7e47aeaeac4fe7f1959, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameLoopControler
+  deckController: {fileID: 491392968}
+  pegging: {fileID: 795586566}
+  handUIController: {fileID: 71617795}
+  drawButton: {fileID: 61920787}
+--- !u!4 &339627966
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339627964}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1031.0227, y: 745.7201, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &384593300
 GameObject:
   m_ObjectHideFlags: 0
@@ -2993,4 +3042,5 @@ SceneRoots:
   - {fileID: 795586567}
   - {fileID: 1349796694}
   - {fileID: 1909108181}
+  - {fileID: 339627966}
   - {fileID: 1236070068}
