@@ -6,9 +6,12 @@ public class PointSpawner : MonoBehaviour
     public GameObject pointPrefab; // Reference to the Point prefab
     public Transform jar;          // Reference to the jar (Image)
     public Transform canvas;       // Reference to the Canvas
+    public GameObject PointSpawnerObject; // Reference to the PointSpawner GameObject, that has an animation
 
     public float minX = 700f;
     public float maxX = 800f;
+
+    private bool isAnimating = false;
 
     public void SpawnPoint()
     {
@@ -17,6 +20,21 @@ public class PointSpawner : MonoBehaviour
         {
             Debug.LogWarning("PointPrefab or Canvas is not assigned.");
             return;
+        }
+
+        // Only play animation if not already animating
+        if (PointSpawnerObject != null && !isAnimating)
+        {
+            PointSpawnerObject.SetActive(true); // Make visible
+
+            Animator animator = PointSpawnerObject.GetComponent<Animator>();
+            if (animator != null)
+            {
+                animator.Play("YourAnimationName"); // Replace with your animation's name or use a trigger
+            }
+
+            StartCoroutine(HideSpawnerAfterDelay(0.6f));
+            isAnimating = true;
         }
 
         // Pick a random X value in the range
@@ -34,5 +52,19 @@ public class PointSpawner : MonoBehaviour
         {
             rb.AddForce(Vector2.down * 50f, ForceMode2D.Impulse); // Adjust the force as needed
         }
+    }
+
+    private System.Collections.IEnumerator HideSpawnerAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (PointSpawnerObject != null)
+            PointSpawnerObject.SetActive(false);
+        isAnimating = false;
+    }
+
+    void Start()
+    {
+        PointSpawnerObject.SetActive(false); // Initially hide the PointSpawnerObject
+        isAnimating = false;
     }
 }
