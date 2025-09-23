@@ -16,6 +16,8 @@ public class HandUIController : MonoBehaviour
     public CardDropHandler cardDropHandler; // Reference to CardDropHandler script
     public GameObject discardPile; // Assign this in the inspector
     public GameLoopControler gameLoopControler; // Reference to GameLoopControler script
+    public float downY = -300f; // Use a fixed Y position for all cards
+    public float discardY = -350f; // Lower than played cards
 
     public void AddCardToHand(Sprite cardArtwork, string suitNumber, string cardNumber)
     {
@@ -119,13 +121,14 @@ public class HandUIController : MonoBehaviour
         // Arrange shuffled cards in playArea with spacing, animating them smoothly
         float spacing = 100f;
         float startX = -(playedCards.Count - 1) * spacing / 2;
-        float downY = -200f; // Use a fixed Y position for all cards
+        float rightx = 65f; // Moves it to the right a bit
+        startX += rightx;
         for (int i = 0; i < playedCards.Count; i++)
         {
             RectTransform cardTransform = playedCards[i].GetComponent<RectTransform>();
             if (cardTransform != null)
             {
-                Vector2 targetPosition = new Vector2(startX + i * spacing, downY);
+                Vector2 targetPosition = new Vector2(startX + i * spacing + rightx, downY);
                 StartCoroutine(AnimateCardToPosition(cardTransform, targetPosition));
             }
         }
@@ -251,7 +254,7 @@ public class HandUIController : MonoBehaviour
         // Step 5: Arrange the crib hand underneath the played cards (centered, spaced, lower Y)
         float spacing = 100f;
         float startX = -(cribHand.Count - 1) * spacing / 2;
-        float downY = -350f; // Lower than played cards
+        float discardX = 130f; // Moves it to the right a bit
         for (int i = 0; i < cribHand.Count; i++)
         {
             GameObject card = cribHand[i];
@@ -259,7 +262,13 @@ public class HandUIController : MonoBehaviour
             RectTransform cardTransform = card.GetComponent<RectTransform>();
             if (cardTransform != null)
             {
-                Vector2 targetPosition = new Vector2(startX + i * spacing, downY);
+                // If this is one of the new cards, spawn at deck's position
+                if (newCards.Contains(card) && deck != null)
+                {
+                    Vector2 deckLocalPos = playArea.transform.InverseTransformPoint(deck.transform.position);
+                    cardTransform.anchoredPosition = deckLocalPos;
+                }
+                Vector2 targetPosition = new Vector2(startX + i * spacing + discardX, discardY);
                 StartCoroutine(AnimateCardToPosition(cardTransform, targetPosition));
             }
         }
