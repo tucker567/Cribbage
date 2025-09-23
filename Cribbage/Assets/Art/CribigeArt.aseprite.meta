@@ -129,7 +129,7 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: CribigeArt
     originalName: 
-    pivot: {x: 0.529661, y: 0}
+    pivot: {x: 0.5479452, y: -0.028268551}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -137,8 +137,8 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 236
-      height: 241
+      width: 365
+      height: 283
     spriteID: ddd6518bd9b8caa4bb1802a20915934c
     spriteBone: []
     spriteOutline: []
@@ -168,9 +168,9 @@ ScriptedImporter:
       additiveSortOrder: 0
       cellRect:
         x: 0
-        y: 0
-        width: 236
-        height: 241
+        y: 8
+        width: 365
+        height: 283
       spriteId: ddd6518bd9b8caa4bb1802a20915934c
     linkedCells: []
     tileCells: []
@@ -181,5 +181,5 @@ ScriptedImporter:
   generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
-  canvasSize: {x: 250, y: 250}
-  previousTextureSize: {x: 256, y: 256}
+  canvasSize: {x: 400, y: 300}
+  previousTextureSize: {x: 512, y: 512}
