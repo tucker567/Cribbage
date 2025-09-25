@@ -16,6 +16,7 @@ public class GameLoopControler : MonoBehaviour
     // Different canvases
     public GameObject ShopScreenCanvas;
     public GameObject GameScreenCanvas;
+    public GameObject PegCanvas;
 
     [Header("Different encounter round num")]
     public int roundsBeforeShop = 2;
@@ -144,6 +145,7 @@ public class GameLoopControler : MonoBehaviour
         if (ShopScreenCanvas != null && GameScreenCanvas != null)
         {
             ShopScreenCanvas.SetActive(true);
+            PegCanvas.SetActive(true);
             GameScreenCanvas.SetActive(false);
         }
         Debug.Log("Shop is now open!");
@@ -155,6 +157,7 @@ public class GameLoopControler : MonoBehaviour
         if (ShopScreenCanvas != null && GameScreenCanvas != null)
         {
             ShopScreenCanvas.SetActive(false);
+            PegCanvas.SetActive(false);
             GameScreenCanvas.SetActive(true);
         }
     Debug.Log("Exiting shop, continuing to next round.");

@@ -30,7 +30,7 @@ public class PointSpawner : MonoBehaviour
             Animator animator = PointSpawnerObject.GetComponent<Animator>();
             if (animator != null)
             {
-                animator.Play("YourAnimationName"); // Replace with your animation's name or use a trigger
+                animator.Play("Points"); // Replace with your animation's name or use a trigger
             }
 
             StartCoroutine(HideSpawnerAfterDelay(0.6f));

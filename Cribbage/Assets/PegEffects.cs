@@ -6,15 +6,15 @@ public class FifteenPeg : PegDefinition
     public FifteenPeg()
     {
         pegName = "15 Peg";
-        description = "Gives +1 point for every fifteen.";
+        description = "Gives +3 points for every fifteen.";
         cost = 10;
         effects = new PegEffect[]
         {
             new PegEffect
             {
                 effectName = "FifteenBonus",
-                description = "Adds +1 point for every fifteen.",
-                value = 1
+                description = "Adds +3 points for every fifteen.",
+                value = 3
             }
         };
     }

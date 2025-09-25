@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Linq; // For Select()
 
 public class Pegging : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class Pegging : MonoBehaviour
 
     public TextSpawner textSpawner; // Reference to TextSpawner to show pegging points
     public PointSpawner pointSpawner; // Reference to PointSpawner to spawn points
+    public PegInventory pegInventory; // Assign in inspector or via script
 
     // Try to play a card. Returns false if the play would exceed 31 (card must be returned).
     public bool TryPlayCard(CardUIController cardUI, out int pointsAwarded)
@@ -54,9 +56,10 @@ public class Pegging : MonoBehaviour
         // Score 15 or 31
         if (runningTotal == 15)
         {
-            pointsAwarded += 2;
-            scoringEvents.Add("+2 for fifteen");
-            StartCoroutine(SpawnPointsWithDelay(2, timeBetweenPoints));
+            int bonus = GetPegEffectBonus("FifteenBonus");
+            pointsAwarded += 2 + bonus;
+            scoringEvents.Add($"+{2 + bonus} for fifteen");
+            StartCoroutine(SpawnPointsWithDelay(2 + bonus, timeBetweenPoints));
         }
         if (runningTotal == 31)
         {
@@ -247,9 +250,12 @@ public class Pegging : MonoBehaviour
         int points = 0;
 
         int fifteens = CountFifteens(allCards);
+        int fifteenBonus = GetPegEffectBonus("FifteenBonus", fifteens);
+        Debug.Log($"Fifteens: {fifteens}, FifteenBonus: {fifteenBonus}, Total points for fifteens: {fifteens * 2 + fifteenBonus}");
+
         if (fifteens > 0)
         {
-            int pts = fifteens * 2;
+            int pts = fifteens * 2 + fifteenBonus;
             points += pts;
             textSpawner?.SpawnFloatingText($"{pts} points for {fifteens} fifteen(s)");
             for (int i = 0; i < pts; i++)
@@ -301,6 +307,8 @@ public class Pegging : MonoBehaviour
                 StartCoroutine(SpawnPointsWithDelay(1, timeBetweenPoints));
             }
         }
+
+        Debug.Log($"Fifteens: {fifteens}, FifteenBonus: {fifteenBonus}");
 
         AddToScore(points); // Update score at the same time as text
         return points;
@@ -500,5 +508,24 @@ public class Pegging : MonoBehaviour
             pointSpawner.SpawnPoint();
             yield return new WaitForSeconds(delay);
         }
+    }
+
+    private int GetPegEffectBonus(string effectName, int baseCount = 1)
+    {
+        int bonus = 0;
+        if (pegInventory != null)
+        {
+            foreach (var peg in pegInventory.ownedPegs)
+            {
+                foreach (var effect in peg.effects)
+                {
+                    if (effect.effectName == effectName)
+                    {
+                        bonus += effect.value * baseCount;
+                    }
+                }
+            }
+        }
+        return bonus;
     }
 }

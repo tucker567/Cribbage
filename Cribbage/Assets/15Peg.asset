@@ -18,5 +18,5 @@ MonoBehaviour:
   cost: 10
   effects:
   - effectName: FifteenBonus
-    description: Adds +1 point for every fifteen.
-    value: 1
+    description: Adds +3 point for every fifteen.
+    value: 3
